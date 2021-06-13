@@ -10,6 +10,16 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <signal.h>
+#include <string.h>
+#include <math.h>  
+
+///write all structs and includes here.
+typedef struct msgbuff
+{
+    long mtype;
+    int mRemainingTime;
+    
+}msgbuff;
 
 typedef short bool;
 #define true 1
