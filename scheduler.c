@@ -7,9 +7,9 @@ ProcessData temp;
 //prev.id = 0;
 bool reading = true;
 
-void Down(int msgq_id){
+void Down(int msgq_id) {
     //used to send the reversed message
-    msgsnd(msgq_id, &message, sizeof(message.mRemainingTime), !IPC_NOWAIT); 
+    msgsnd(msgq_id, &message, sizeof(message.mRemainingTime), !IPC_NOWAIT);
 }
 
 void FCFS(int sem1, int sem2, int algorithm, ProcessData* shmaddr);
@@ -17,10 +17,10 @@ void FCFS(int sem1, int sem2, int algorithm, ProcessData* shmaddr);
 union Semun
 {
     int val;               /* value for SETVAL */
-    struct semid_ds *buf;  /* buffer for IPC_STAT & IPC_SET */
-    ushort *array;         /* array for GETALL & SETALL */
-    struct seminfo *__buf; /* buffer for IPC_INFO */
-    void *__pad;
+    struct semid_ds* buf;  /* buffer for IPC_STAT & IPC_SET */
+    ushort* array;         /* array for GETALL & SETALL */
+    struct seminfo* __buf; /* buffer for IPC_INFO */
+    void* __pad;
 };
 
 void down(int sem)
@@ -53,7 +53,7 @@ void up(int sem)
     }
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
     initClk();
 
@@ -65,15 +65,15 @@ int main(int argc, char *argv[])
         perror("Error in create");
         exit(-1);
     }
-    int *shmaddrAlgorithm = shmat(shmidAlgo, (void *)0, 0);
-    if(shmaddrAlgorithm == (void*) -1)	
+    int* shmaddrAlgorithm = shmat(shmidAlgo, (void*)0, 0);
+    if (shmaddrAlgorithm == (void*)-1)
     {
         perror("Error in attaching\n");
         exit(-1);
     }
     //*shmaddrAlgorithm = quantum;
     algorithm = *shmaddrAlgorithm;
-    printf("algo = %d\n",algorithm);
+    printf("algo = %d\n", algorithm);
 
     int shmid;
     shmid = shmget(10, 4096, IPC_CREAT | 0644);
@@ -82,8 +82,8 @@ int main(int argc, char *argv[])
         perror("Error in create");
         exit(-1);
     }
-    ProcessData *shmaddr = shmat(shmid, (void *)0, 0);
-    if(shmaddr == (void*) -1)	
+    ProcessData* shmaddr = shmat(shmid, (void*)0, 0);
+    if (shmaddr == (void*)-1)
     {
         perror("Error in attaching\n");
         exit(-1);
@@ -113,59 +113,63 @@ int main(int argc, char *argv[])
     //TODO: implement the scheduler.
 
 
-    if(algorithm==1){
-        FCFS(sem1, sem2, algorithm,shmaddr);
+    if (algorithm == 1) {
+        FCFS(sem1, sem2, algorithm, shmaddr);
     }
-    
-    
+
+
 
 
     //TODO: upon termination release the clock resources.
     destroyClk(true);
 }
 
-void FCFS(int sem1, int sem2, int algorithm, ProcessData* shmaddr){
-    Queue *readyQueue = (Queue*) malloc(sizeof(Queue*));
+void FCFS(int sem1, int sem2, int algorithm, ProcessData* shmaddr) {
+    Queue* readyQueue = (Queue*)malloc(sizeof(Queue*));
     char buf[50];
-    getcwd(buf,sizeof(buf));
+    getcwd(buf, sizeof(buf));
     ProcessData runningProcess;
     runningProcess.remainingTime = 0;
     int prevTime;
     int currentTime;
 
-    while(1){
+    while (1) {
 
-        if(reading){
-            
+        if (reading) {
+
             down(sem1);
-            
-            
+
+
             temp = *shmaddr;
             //printf("%d\n",temp.id);
-            if(temp.id != -1 ){
-                if(temp.id!=prev.id && temp.arrivalTime >0){
+            if (temp.id != -1) {
+                if (temp.id != prev.id && temp.arrivalTime > 0) {
                     //printf("%d\n",temp.id);
-                    printf("%d %d %d\n",temp.arrivalTime,temp.runningTime,temp.priority);
-                    enqueue(readyQueue,temp);
+                    printf("%d %d %d\n", temp.arrivalTime, temp.runningTime, temp.priority);
+
                     int processPid = fork();
-                    temp.pid = processPid;
-                    printf("%d\n",temp.pid); 
-                    if(processPid == 0){
-                         //temp.pid = getpid();
-                         char buffer[265];
-                         //itoa(temp.runningTime,buffer,10); 
-                         strcat(buf,"/process.out");
-                         execl(buf,"process.out", NULL);
-                     }
-                     int sendRunningTime;
-                     message.mtype = processPid;
-                     message.mRemainingTime = temp.runningTime;
-                     sendRunningTime = msgget(2, 0666 | IPC_CREAT);//message queue to send message from the server
-                     Down(sendRunningTime);
+                    if (processPid != 0) {
+
+                        temp.pid = processPid;
+                        enqueue(readyQueue, temp);
+                        printf("%d\n", temp.pid);
+                    }
+                    if (processPid == 0) {
+                        //temp.pid = getpid();
+                        char buffer[265];
+                        //itoa(temp.runningTime,buffer,10); 
+                        strcat(buf, "/process.out");
+                        execl(buf, "process.out", NULL);
+                    }
+                    int sendRunningTime;
+                    message.mtype = processPid;
+                    message.mRemainingTime = temp.runningTime;
+                    sendRunningTime = msgget(2, 0666 | IPC_CREAT);//message queue to send message from the server
+                    Down(sendRunningTime);
                 }
-                
+
             }
-            else{
+            else {
                 reading = false;
                 printf("stop reading\n");
             }
@@ -173,23 +177,23 @@ void FCFS(int sem1, int sem2, int algorithm, ProcessData* shmaddr){
             prev = temp;
         }
         ProcessData firstInQueue;
-        if(runningProcess.remainingTime == 0 && peek(readyQueue,&firstInQueue)){
-            dequeue(readyQueue,&runningProcess);
-            printf("my data pid = %d, remainingtime =%d\n",runningProcess.pid,runningProcess.arrivalTime);
+        if (runningProcess.remainingTime == 0 && peek(readyQueue, &firstInQueue)) {
+            dequeue(readyQueue, &runningProcess);
+            printf("my data pid = %d, remainingtime =%d\n", runningProcess.pid, runningProcess.arrivalTime);
         }
-        if(runningProcess.runningTime != 0){
+        if (runningProcess.remainingTime != 0) {
             prevTime = currentTime;
             currentTime = getClk();
-            if(prevTime!=currentTime){
-
+            if (prevTime != currentTime) {
+                printf("remaining time = %d\n", runningProcess.remainingTime);
                 //kill(runningProcess.pid,SIGUSR1);
-                printf("Current Time is %d\n", currentTime);
+                //printf("Current Time is %d\n", currentTime);
             }
         }
 
-        if(reading == false && !peek(readyQueue,&firstInQueue) && runningProcess.remainingTime == 0){
+        if (reading == false && !peek(readyQueue, &firstInQueue) && runningProcess.remainingTime == 0) {
             printf("done scheduling");
         }
-        
+
     }
 }
