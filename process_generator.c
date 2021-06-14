@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
         fscanf(f, "%s", buff);
         temp.remainingTime = temp.runningTime = atoi(buff);
         
-        printf("rem time = %d, run time = %d\n",temp.remainingTime,temp.runningTime);
+        //printf("rem time = %d, run time = %d\n",temp.remainingTime,temp.runningTime);
         fscanf(f, "%s", buff);
         temp.priority = atoi(buff);
         
@@ -127,12 +127,12 @@ int main(int argc, char* argv[])
     // 3. Initiate and create the scheduler and clock processes.
     char buf[50];
     getcwd(buf,sizeof(buf));
-    printf("%s\n",buf);
+    //printf("%s\n",buf);
     
     int schedulerPid = fork();
     if (schedulerPid == 0)
     {
-        printf("Scheduler\n");
+        //printf("Scheduler\n");
         strcat(buf,"/scheduler.out");
         execl(buf,"scheduler.out",NULL);
 
@@ -206,7 +206,7 @@ int main(int argc, char* argv[])
                         if(dequeue(Q,&temp))
                         {
                             *shmaddr = temp;
-                            printf("sending\n");
+                            //printf("sending\n");
                             processNum--;
                         }
                     }
@@ -241,6 +241,7 @@ int main(int argc, char* argv[])
             wait(stat_loc);
             semctl(sem1,0,IPC_RMID);
             semctl(sem2,0,IPC_RMID);
+            printf("done\n");
             
 	        destroyClk(true);
         }

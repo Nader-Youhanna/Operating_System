@@ -21,6 +21,29 @@ typedef struct msgbuff
     
 }msgbuff;
 
+enum State {
+    started,
+    resumed,
+    stopped,
+    finished
+};
+
+typedef struct ProcessData
+{   
+    int pid;
+    int arrivalTime;
+    int priority;
+    int runningTime;
+    int remainingTime;
+    enum State status;
+    int waitingTime;
+    int startTime;
+    int finishTime;
+    float weightedTA;
+    //int memorySize;
+    int id;
+}ProcessData;
+
 typedef short bool;
 #define true 1
 #define false 0
