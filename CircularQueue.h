@@ -5,9 +5,6 @@
 #include "Node.h"
 #include <stdbool.h>
 
-
-
-
 typedef struct CircularQueue
 {
 	ProcessData* Arr;
@@ -22,7 +19,7 @@ bool isEmptyArr(struct CircularQueue* Q)
 
 bool isFullArr(struct CircularQueue* Q)
 {
-	return(Q->front == (Q->back + 1) % (Q->max + 1));
+	return(Q->front == (Q->back + 1) % (Q->max));
 
 }
 
@@ -35,28 +32,28 @@ bool enqueueArr(struct CircularQueue* Q,const ProcessData item)
 
 	else
 	{
-        printf("adding element\n");
-		Q->back = (Q->back + 1) % (Q->max + 1);
-        printf("back = %d \n",Q->back);
+        //printf("adding element\n");
+		Q->back = (Q->back + 1) % (Q->max);
+        //printf("back = %d \n",Q->back);
 		Q->Arr[Q->back] = item;
 		return true;
 	}
 }
 
 bool dequeueArr(struct CircularQueue* Q,ProcessData* item)
+{
+	if (isEmptyArr(Q))
 	{
-		if (isEmptyArr(Q))
-		{
-			return false;
-		}
-		else
-		{
-			Q->front = (Q->front + 1) % (Q->max + 1);
-			*item = Q->Arr[Q->front];
-			return true;
-		}
-
+		return false;
 	}
+	else
+	{
+		Q->front = (Q->front + 1) % (Q->max);
+		*item = Q->Arr[Q->front];
+		return true;
+	}
+
+}
 
 
 
