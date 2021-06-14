@@ -162,7 +162,6 @@ int main(int argc, char *argv[])
 
     }
     printf("algo = %d\n",algorithm);
-    printf("Ok\n");
     int shmid;
     shmid = shmget(10, 4096, IPC_CREAT | 0644);
     if (shmid == -1)
@@ -628,7 +627,7 @@ void RR(int sem1, int sem2, int algorithm, ProcessData* shmaddr, int quantum)
 
             //RR
             ProcessData firstInQueue;
-            if ( (!isEmptyArr(readyQueue)) && (getClk() - timeCounter == quantum || runningProcess.remainingTime == 0))
+            if ( (!isEmptyArr(readyQueue)) && (currentTime - timeCounter == quantum || runningProcess.remainingTime == 0))
             {
 
                 if (runningProcess.remainingTime > 0)
@@ -675,7 +674,9 @@ void RR(int sem1, int sem2, int algorithm, ProcessData* shmaddr, int quantum)
                 currentTime = getClk();
                 if(prevTime!=currentTime){
                     //printf("remaining time = %d\n",runningProcess.remainingTime);
-                    if(getClk()!=runningProcess.startTime){
+                    if(getClk()!=runningProcess.startTime)
+                    {
+                        //getClk()!=runningProcess.startTime
 
                         runningProcess.remainingTime--;
                         printf("my id = %d\n",runningProcess.id);
