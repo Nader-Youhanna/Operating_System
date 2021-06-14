@@ -6,6 +6,7 @@
 #include <limits.h>
 #include <string.h>
 
+
 #include "Queue.h"
 #define SHKEY 300
 
@@ -101,12 +102,13 @@ int main(int argc, char* argv[])
 
     // 2. Read the chosen scheduling algorithm and its parameters, if there are any from the argument list.
     int algorithm = atoi(argv[3]);
-    int quantum;
+    int quantum = 0;
     //int shmid;
     if (algorithm == 5) //ROundRobin
     {
         
         quantum = atoi(argv[5]);
+        algorithm+=quantum;
 
     }
     int shmidAlgo;

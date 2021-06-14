@@ -13,6 +13,7 @@
 #include <string.h>
 #include <math.h>  
 
+
 ///write all structs and includes here.
 typedef struct msgbuff
 {
@@ -30,6 +31,7 @@ enum State {
 
 typedef struct ProcessData
 {   
+    int logTime;
     int pid;
     int arrivalTime;
     int priority;
